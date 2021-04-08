@@ -3,6 +3,19 @@ class MinPriorityQueue:
 		self.heap = [0]
 		self.inf = 9999999
 
+	def is_empty(self):
+		"""
+		Check if a min-priority-queue is empty.
+
+		>>> q = MinPriorityQueue()
+		>>> q.is_empty()
+		True
+		>>> q.insert(1, 10)
+		>>> q.is_empty()
+		False
+		"""
+		return self.heap[0] == 0
+
 	def insert(self, el, key):
 		"""
 		Insert a new el with key.
