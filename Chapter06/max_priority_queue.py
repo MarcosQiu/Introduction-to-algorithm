@@ -1,29 +1,47 @@
 class MaxPriorityQueue:
 	def __init__(self):
 		self.heap = [0]
+		self.neg_inf = -9999999
 
 	def insert(self, el, key):
+		"""
+		Insert a new el with key.
+		"""
 		inserted_idx = self.heap[0] + 1
 		if inserted_idx < len(self.heap):
-			self.heap[inserted_idx] = [key, el]
+			self.heap[inserted_idx] = [self.neg_inf, el]
 		else:
-			self.heap.append([key, el])
+			self.heap.append([self.neg_inf, el])
 		self.heap[0] += 1
-
-		idx_to_check = inserted_idx
-		while (
-			idx_to_check > 1 and
-			self.heap[idx_to_check][0] > self.heap[idx_to_check // 2][0]
-		):
-			self.heap[idx_to_check], self.heap[idx_to_check // 2] = self.heap[idx_to_check // 2], self.heap[idx_to_check]
-			idx_to_check = idx_to_check // 2
-
+		self.increase_key(inserted_idx, key)
 
 	def maximum(self):
+		"""
+		Return the element with maximum key.
+
+		>>> q = MaxPriorityQueue()
+		>>> q.insert(1, 10)
+		>>> q.maximum()
+		1
+		>>> q.insert(2, 1)
+		>>> q.maximum()
+		1
+		"""
 		assert self.heap[0] > 0, 'The priority queue is empty'
 		return self.heap[1][1]
 
 	def extract_max(self):
+		"""
+		Remove and return the element with maximum key.
+
+		>>> q = MaxPriorityQueue()
+		>>> q.insert(1, 10)
+		>>> q.insert(2, 1)
+		>>> q.extract_max()
+		1
+		>>> q.extract_max()
+		2
+		"""
 		assert self.heap[0] > 0, 'The priority queue is empty'
 		self.heap[1], self.heap[self.heap[0]] = self.heap[self.heap[0]], self.heap[1]
 		self.heap[0] -= 1
@@ -47,16 +65,29 @@ class MaxPriorityQueue:
 		return self.heap[self.heap[0] + 1][1]
 
 
-
 	def increase_key(self, idx, key):
+		"""
+		Increase the key of element in position idx.
+
+		>>> q = MaxPriorityQueue()
+		>>> q.insert(1, 10)
+		>>> q.insert(2, 1)
+		>>> q.maximum()
+		1
+		>>> q.increase_key(2, 20)
+		>>> q.maximum()
+		2
+		"""
 		assert idx > 0 and idx <= self.heap[0], 'invalid idx'
 		assert key > self.heap[idx][0], 'cannot decrease the key'
 
-		self.heap[idx][0] = key
 		idx_to_check = idx
+		self.heap[idx_to_check][0] = key
+		tmp = self.heap[idx_to_check]
 		while (
 			idx_to_check > 1 and
-			self.heap[idx_to_check][0] > self.heap[idx_to_check // 2][0]
+			key > self.heap[idx_to_check // 2][0]
 		):
-			self.heap[idx_to_check], self.heap[idx_to_check // 2] = self.heap[idx_to_check // 2], self.heap[idx_to_check]
+			self.heap[idx_to_check] = self.heap[idx_to_check // 2]
 			idx_to_check = idx_to_check // 2
+		self.heap[idx_to_check] = tmp
