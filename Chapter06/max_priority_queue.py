@@ -58,25 +58,33 @@ class MaxPriorityQueue:
 		assert self.heap[0] > 0, 'The priority queue is empty'
 		self.heap[1], self.heap[self.heap[0]] = self.heap[self.heap[0]], self.heap[1]
 		self.heap[0] -= 1
-
-		idx_to_check = 1
-		while idx_to_check * 2 <= self.heap[0]:
-			max_idx = idx_to_check
-			if self.heap[idx_to_check * 2][0] > self.heap[max_idx][0]:
-				max_idx = idx_to_check * 2
-			if (
-				idx_to_check * 2 < self.heap[0] and
-				self.heap[idx_to_check * 2 + 1][0] > self.heap[max_idx][0]
-			):
-				max_idx = idx_to_check * 2 + 1
-
-			if max_idx == idx_to_check:
-				break
-			self.heap[idx_to_check], self.heap[max_idx] = self.heap[max_idx], self.heap[idx_to_check]
-			idx_to_check = max_idx
+		self._max_heapify(1)
 
 		return self.heap[self.heap[0] + 1][1]
 
+	def heap_delete(self, idx):
+		"""
+		Delete an element in position idx.
+
+		>>> q = MaxPriorityQueue()
+		>>> q.insert(1, 10)
+		>>> q.insert(2, 1)
+		>>> q.maximum()
+		1
+		>>> q.heap_delete(2)
+		2
+		"""
+		assert idx > 0 and idx <= self.heap[0], 'invalid idx'
+		el_to_return = self.heap[idx][1]
+		old_key = self.heap[idx][0]
+		self.heap[idx] = self.heap[self.heap[0]]			
+		if old_key < self.heap[self.heap[0]][0]:
+			self.increase_key(idx, self.heap[idx][0])
+		else:
+			self._max_heapify(idx)
+		self.heap[0] -= 1
+
+		return el_to_return
 
 	def increase_key(self, idx, key):
 		"""
@@ -104,3 +112,19 @@ class MaxPriorityQueue:
 			self.heap[idx_to_check] = self.heap[idx_to_check // 2]
 			idx_to_check = idx_to_check // 2
 		self.heap[idx_to_check] = tmp
+
+	def _max_heapify(self, idx):
+		while idx * 2 <= self.heap[0]:
+			max_idx = idx
+			if self.heap[idx * 2][0] > self.heap[max_idx][0]:
+				max_idx = idx * 2
+			if (
+				idx * 2 < self.heap[0] and
+				self.heap[idx * 2 + 1][0] > self.heap[max_idx][0]
+			):
+				max_idx = idx * 2 + 1
+
+			if max_idx == idx:
+				break
+			self.heap[idx], self.heap[max_idx] = self.heap[max_idx], self.heap[idx]
+			idx = max_idx
