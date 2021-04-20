@@ -2,10 +2,11 @@ class MaxPriorityQueue:
 	def __init__(self):
 		self.heap = [0]
 		self.neg_inf = -9999999
+		self.inf = 9999999
 
 	def is_empty(self):
 		"""
-		Check if a min-priority-queue is empty.
+		Check if a max-priority-queue is empty.
 
 		>>> q = MaxPriorityQueue()
 		>>> q.is_empty()
@@ -75,16 +76,8 @@ class MaxPriorityQueue:
 		2
 		"""
 		assert idx > 0 and idx <= self.heap[0], 'invalid idx'
-		el_to_return = self.heap[idx][1]
-		old_key = self.heap[idx][0]
-		self.heap[idx] = self.heap[self.heap[0]]			
-		if old_key < self.heap[self.heap[0]][0]:
-			self.increase_key(idx, self.heap[idx][0])
-		else:
-			self._max_heapify(idx)
-		self.heap[0] -= 1
-
-		return el_to_return
+		self.increase_key(idx, self.inf)
+		return self.extract_max()
 
 	def increase_key(self, idx, key):
 		"""
